@@ -19,6 +19,21 @@
   [role="button"]:not(:disabled) {
     cursor: pointer;
   }
+
+  body {
+    letter-spacing: 0;
+  }
+
+  h1,
+  h2,
+  h3,
+  h4,
+  nav,
+  header,
+  footer {
+    font-family:
+      "Avenir Next", "Helvetica Neue", ui-sans-serif, system-ui, sans-serif;
+  }
 }
 
 @utility max-w-app {

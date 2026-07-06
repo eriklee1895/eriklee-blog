@@ -33,9 +33,12 @@ const homePath = getRelativeLocaleUrl(locale, "");
     data-home-path={homePath}
     class="app-layout"
   >
-    <section id="hero" class="border-border border-b pt-8 pb-6">
-      <h1 class="my-4 inline-block text-4xl font-bold sm:my-8 sm:text-5xl">
-        Mingalaba
+    <section id="hero" class="border-border border-b pt-10 pb-8 sm:pt-16 sm:pb-10">
+      <p class="text-muted-foreground mb-4 text-sm font-semibold tracking-[0.2em] uppercase">
+        AI Engineering / Agents / Tooling
+      </p>
+      <h1 class="my-4 max-w-2xl text-4xl leading-tight font-bold sm:my-6 sm:text-6xl">
+        Notes from building with models.
       </h1>
       <a
         target="_blank"
@@ -52,20 +55,18 @@ const homePath = getRelativeLocaleUrl(locale, "");
         <span class="sr-only">RSS Feed</span>
       </a>
 
-      <p>
-        AstroPaper is a minimal, responsive, accessible and SEO-friendly Astro
-        blog theme. This theme follows best practices and provides accessibility
-        out of the box. Light and dark mode are supported by default. Moreover,
-        additional color schemes can also be configured.
+      <p class="max-w-2xl text-lg leading-8">
+        Long-form notes on agent systems, AI coding tools, product engineering,
+        and the odd corners where software starts behaving like a collaborator.
       </p>
-      <p class="mt-2">
-        Read the blog posts or check
+      <p class="text-muted-foreground mt-4 max-w-2xl leading-7">
+        The writing source of truth lives in my
         <LinkButton
           class="hover:text-accent underline decoration-dashed underline-offset-4"
-          href="https://github.com/satnaing/astro-paper#readme"
+          href="https://github.com/eriklee1895/writing-agent-harness"
         >
-          README
-        </LinkButton> for more info.
+          writing-agent-harness
+        </LinkButton>; this site is the public notebook.
       </p>
       {
         socials.length > 0 && (
@@ -104,7 +105,7 @@ const homePath = getRelativeLocaleUrl(locale, "");
       recentPosts.length > 0 && (
         <section id="recent-posts" class="pt-12 pb-6">
           <h2 class="text-2xl font-semibold tracking-wide">
-            {t.home.recentPosts}
+            Latest notes
           </h2>
           <ul>
             {recentPosts.slice(0, postsConfig.perIndex).map(data => (

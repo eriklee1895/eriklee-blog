@@ -7,28 +7,28 @@
   --color-muted: var(--muted);
   --color-muted-foreground: var(--muted-foreground);
   --color-border: var(--border);
-  --font-app: var(--font-google-sans-code);
+  --font-app: Charter, "Iowan Old Style", Georgia, ui-serif, serif;
 }
 
 /* Light theme values */
 :root,
 [data-theme="light"] {
-  --background: #fdfdfd;
-  --foreground: #282728;
-  --accent: #006cac;
+  --background: #fbfaf7;
+  --foreground: #202124;
+  --accent: #0b6b8f;
   --accent-foreground: #ffffff;
-  --muted: #e6e6e6;
-  --muted-foreground: #6b7280;
-  --border: #ece9e9;
+  --muted: #ebe6dd;
+  --muted-foreground: #6e6a62;
+  --border: #e4ded3;
 }
 
 /* Dark theme values */
 [data-theme="dark"] {
-  --background: #212737;
-  --foreground: #eaedf3;
-  --accent: #ff6b01;
+  --background: #15171a;
+  --foreground: #e8e3d8;
+  --accent: #67c4df;
   --accent-foreground: #ffffff;
-  --muted: #343f60;
-  --muted-foreground: #afb9ca;
-  --border: #ab4b08;
+  --muted: #25282d;
+  --muted-foreground: #a9a299;
+  --border: #35322e;
 }
