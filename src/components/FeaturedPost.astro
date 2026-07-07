@@ -1,0 +1,58 @@
+---
+import type { CollectionEntry } from "astro:content";
+import { getPostUrl } from "@/utils/getPostPaths";
+import { getReadingTime, formatReadingTime } from "@/utils/readingTime";
+import Datetime from "./Datetime.astro";
+import { getTaxonomyLabel } from "@/utils/taxonomy";
+import { slugifyStr } from "@/utils/slugify";
+import { getRelativeLocaleUrl } from "astro:i18n";
+import config from "@/config";
+
+type Props = {
+  post: CollectionEntry<"posts">;
+};
+
+const { post } = Astro.props;
+const { title, description, category = "其他", series, pubDatetime, modDatetime, timezone } = post.data;
+const locale = Astro.currentLocale ?? config.site.lang;
+const readingMinutes = getReadingTime(post.body ?? "");
+const readingTimeLabel = formatReadingTime(readingMinutes);
+const categoryLabel = getTaxonomyLabel("category", category);
+const seriesLabel = series ? getTaxonomyLabel("series", series) : "";
+---
+
+<article class="border-border group relative mb-10 border-b pb-10">
+  <div class="mb-3 flex items-center gap-2 text-xs">
+    <span class="bg-accent text-accent-foreground rounded px-2 py-0.5 font-semibold">精选</span>
+    <a
+      href={getRelativeLocaleUrl(locale, `categories/${slugifyStr(category)}`)}
+      class="bg-muted text-muted-foreground hover:text-accent rounded px-2 py-0.5 font-medium"
+    >
+      {categoryLabel}
+    </a>
+    {series && (
+      <a
+        href={getRelativeLocaleUrl(locale, `series/${slugifyStr(series)}`)}
+        class="bg-muted text-muted-foreground hover:text-accent rounded px-2 py-0.5 font-medium"
+      >
+        {seriesLabel}
+      </a>
+    )}
+  </div>
+  <a
+    href={getPostUrl(post.id, post.filePath, locale)}
+    class="block"
+  >
+    <h2 class="text-foreground text-2xl leading-tight font-semibold transition-colors group-hover:text-accent sm:text-4xl">
+      {title}
+    </h2>
+  </a>
+  <p class="text-muted-foreground mt-4 max-w-3xl text-lg leading-8">
+    {description}
+  </p>
+  <div class="text-muted-foreground mt-4 flex flex-wrap items-center gap-x-3 gap-y-1 text-sm">
+    <Datetime pubDatetime={pubDatetime} modDatetime={modDatetime} timezone={timezone} />
+    <span>·</span>
+    <span>{readingTimeLabel}</span>
+  </div>
+</article>

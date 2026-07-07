@@ -37,7 +37,9 @@ export function getTaxonomyLabel(field: TaxonomyField, value: string) {
 function getFieldValue(post: CollectionEntry<"posts">, field: TaxonomyField) {
   const value = post.data[field];
   if (field === "category") return value || FALLBACK_CATEGORY;
-  return value || "";
+  // series and type: skip posts that don't define the field
+  if (!value) return "";
+  return value;
 }
 
 export function getTaxonomyItems(
@@ -72,7 +74,10 @@ export function getPostsByTaxonomy(
   slug: string
 ) {
   return getSortedPosts(
-    posts.filter(post => slugifyStr(getFieldValue(post, field)) === slug)
+    posts.filter(post => {
+      const value = getFieldValue(post, field);
+      return value && slugifyStr(value) === slug;
+    })
   );
 }
 

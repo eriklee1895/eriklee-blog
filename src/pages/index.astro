@@ -5,6 +5,7 @@ import Layout from "@/layouts/Layout.astro";
 import Header from "@/components/Header.astro";
 import Footer from "@/components/Footer.astro";
 import PostExplorer from "@/components/PostExplorer.astro";
+import FeaturedPost from "@/components/FeaturedPost.astro";
 import { getSortedPosts } from "@/utils/getSortedPosts";
 import {
   getCategoryItems,
@@ -16,7 +17,8 @@ import config from "@/config";
 const locale = Astro.currentLocale ?? config.site.lang;
 const allPosts = await getCollection("posts", ({ data }) => !data.draft);
 const sortedPosts = getSortedPosts(allPosts);
-const recentPosts = sortedPosts.slice(0, config.posts.perIndex);
+const featuredPost = sortedPosts[0];
+const remainingPosts = sortedPosts.slice(1, config.posts.perIndex + 1);
 const categories = getCategoryItems(allPosts);
 const series = getSeriesItems(allPosts);
 const types = getTypeItems(allPosts);
@@ -27,18 +29,37 @@ const postsPath = getRelativeLocaleUrl(locale, "posts");
 <Layout>
   <Header />
 
-  <PostExplorer
-    posts={recentPosts}
-    pageTitle="用模型搭系统时，我写下的现场笔记。"
-    pageDesc="这里记录我对 AI 工程、Agent 架构、编程工具和产品化 workflow 的长期观察：从源码阅读、框架拆解，到把模型接进真实软件的那些细节。"
-    eyebrow="AI 工程 / Agent 系统 / 工具链"
-    {categories}
-    {series}
-    {types}
-    activeKind="all"
-    actionHref={postsPath}
-    actionLabel={`查看全部 ${sortedPosts.length} 篇`}
-  />
+  <main
+    id="main-content"
+    class="mx-auto w-full max-w-6xl px-4 pb-8"
+  >
+    <section class="border-border border-b pb-8 pt-8 sm:pt-12">
+      <p class="text-muted-foreground mb-3 text-sm font-semibold">
+        Erik Lee · 现场笔记
+      </p>
+      <h1 class="max-w-3xl text-3xl leading-tight font-semibold sm:text-5xl">
+        用模型搭系统时，我写下的现场笔记。
+      </h1>
+      <p class="text-muted-foreground mt-4 max-w-2xl leading-7">
+        我写 AI 工程、Agent 架构、编程工具和产品化 workflow——从源码拆解，到把模型接进真实软件的细节。少一点热点复述，多一点具体可追踪的判断。
+      </p>
+    </section>
+
+    {featuredPost && <FeaturedPost post={featuredPost} />}
+
+    <PostExplorer
+      posts={remainingPosts}
+      pageTitle="最新文章"
+      {categories}
+      {series}
+      {types}
+      activeKind="all"
+      hideHeader
+      actionHref={postsPath}
+      actionLabel={`查看全部 ${sortedPosts.length} 篇`}
+      eyebrow=""
+    />
+  </main>
 
   <Footer />
 </Layout>

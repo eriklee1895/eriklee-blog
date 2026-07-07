@@ -36,6 +36,7 @@ const types = getTypeItems(allPosts);
 
   <Breadcrumb />
 
+  <main id="main-content" class="pb-8">
   <PostExplorer
     {page}
     pageTitle={t.pages.postsTitle}
@@ -47,6 +48,7 @@ const types = getTypeItems(allPosts);
   />
 
   <Pagination {page} />
+  </main>
 
   <Footer noMarginTop={page.lastPage > 1} />
 </Layout>

@@ -1,0 +1,140 @@
+---
+/**
+ * Sticky table of contents for article pages.
+ *
+ * Renders an empty <nav> on the server; a client script scans the article
+ * for h2/h3 headings at hydration time and populates the list, with
+ * IntersectionObserver-driven scroll-spy for active link highlighting.
+ */
+---
+
+<nav
+  id="toc-nav"
+  aria-label="目录"
+  class="hidden lg:block lg:sticky lg:top-24 lg:self-start lg:w-56 lg:flex-shrink-0"
+>
+  <div class="border-border max-h-[calc(100vh-8rem)] overflow-y-auto border-s ps-4">
+    <p class="text-muted-foreground mb-3 text-xs font-semibold">目录</p>
+    <ul id="toc-list" class="space-y-1.5 text-sm">
+      <!-- Populated by client script -->
+    </ul>
+  </div>
+</nav>
+
+<script>
+  function initToc() {
+    const article = document.getElementById("article");
+    const list = document.getElementById("toc-list");
+    const nav = document.getElementById("toc-nav");
+    if (!article || !list || !nav) return;
+
+    const headings = Array.from(
+      article.querySelectorAll("h2, h3")
+    ) as HTMLHeadingElement[];
+    if (headings.length < 3) {
+      nav.classList.add("hidden");
+      return;
+    }
+
+    // Ensure each heading has an id for anchor linking
+    const usedIds = new Set<string>();
+    for (const h of headings) {
+      if (!h.id) {
+        const baseId = h.textContent
+          ?.trim()
+          .toLowerCase()
+          .replace(/\s+/g, "-")
+          .replace(/[^\w\u4e00-\u9fff-]/g, "")
+          .slice(0, 40) || "section";
+        let id = baseId;
+        let i = 1;
+        while (usedIds.has(id)) {
+          id = `${baseId}-${i++}`;
+        }
+        usedIds.add(id);
+        h.id = id;
+      } else {
+        usedIds.add(h.id);
+      }
+    }
+
+    // Build TOC list
+    for (const h of headings) {
+      const li = document.createElement("li");
+      const a = document.createElement("a");
+      a.href = `#${h.id}`;
+      a.textContent = h.textContent?.trim() ?? "";
+      a.dataset.tocLink = h.id;
+      a.classList.add(
+        "text-muted-foreground",
+        "hover:text-accent",
+        "block",
+        "leading-snug",
+        "transition-colors"
+      );
+      if (h.tagName === "H3") {
+        a.classList.add("ps-3", "text-xs", "border-s", "border-border", "ms-1");
+      }
+      li.appendChild(a);
+      list.appendChild(li);
+    }
+
+    // Scroll-spy with IntersectionObserver
+    const links = list.querySelectorAll<HTMLAnchorElement>("a[data-toc-link]");
+    const linkMap = new Map<string, HTMLAnchorElement>();
+    links.forEach(a => {
+      linkMap.set(a.dataset.tocLink!, a);
+    });
+
+    let activeId: string | null = null;
+    const setActive = (id: string | null) => {
+      if (id === activeId) return;
+      activeId = id;
+      links.forEach(a => {
+        if (a.dataset.tocLink === id) {
+          a.classList.add("text-accent", "font-semibold");
+        } else {
+          a.classList.remove("text-accent", "font-semibold");
+        }
+      });
+    };
+
+    const observer = new IntersectionObserver(
+      entries => {
+        // Find the topmost visible heading
+        const visible = entries
+          .filter(e => e.isIntersecting)
+          .sort(
+            (a, b) =>
+              a.boundingClientRect.top - b.boundingClientRect.top
+          );
+        if (visible.length > 0) {
+          setActive(visible[0].target.id);
+        }
+      },
+      {
+        rootMargin: "-80px 0px -70% 0px",
+        threshold: 0,
+      }
+    );
+
+    headings.forEach(h => observer.observe(h));
+
+    // Smooth scroll on TOC click (handled by browser via hash, but ensure offset for sticky header)
+    list.addEventListener("click", e => {
+      const a = (e.target as HTMLElement).closest("a[data-toc-link]");
+      if (!a) return;
+      e.preventDefault();
+      const id = a.getAttribute("href")?.slice(1);
+      if (!id) return;
+      const el = document.getElementById(id);
+      if (el) {
+        el.scrollIntoView({ behavior: "smooth", block: "start" });
+        history.replaceState(null, "", `#${id}`);
+      }
+    });
+  }
+
+  document.addEventListener("astro:page-load", initToc);
+  initToc();
+</script>
