@@ -1,0 +1,93 @@
+---
+import { getRelativeLocaleUrl } from "astro:i18n";
+import type { TaxonomyItem } from "@/utils/taxonomy";
+import config from "@/config";
+
+type Props = {
+  categories: TaxonomyItem[];
+  series: TaxonomyItem[];
+  activeKind?: "all" | "category" | "series";
+  activeSlug?: string;
+};
+
+const {
+  categories,
+  series,
+  activeKind = "all",
+  activeSlug,
+} = Astro.props;
+
+const locale = Astro.currentLocale ?? config.site.lang;
+
+const allPostsUrl = getRelativeLocaleUrl(locale, "posts");
+const categoryUrl = (slug: string) =>
+  getRelativeLocaleUrl(locale, `categories/${slug}`);
+const seriesUrl = (slug: string) => getRelativeLocaleUrl(locale, `series/${slug}`);
+
+const itemClass = (kind: Props["activeKind"], slug?: string) => [
+  "group flex items-center justify-between gap-3 py-1.5 text-sm",
+  "border-b border-transparent hover:border-border hover:text-accent",
+  {
+    "text-accent font-semibold":
+      activeKind === kind && (slug ? activeSlug === slug : true),
+  },
+];
+---
+
+<aside class="lg:sticky lg:top-24 lg:self-start">
+  <nav
+    aria-label="文章分类"
+    class="border-border bg-background/80 border-y py-4 backdrop-blur lg:border-y-0 lg:border-e lg:pe-6"
+  >
+    <a href={allPostsUrl} class:list={itemClass("all")}>
+      <span>全部文章</span>
+      <span class="text-muted-foreground text-xs">
+        {categories.reduce((sum, item) => sum + item.count, 0)}
+      </span>
+    </a>
+
+    <div class="mt-6">
+      <h2 class="text-muted-foreground mb-2 text-xs font-semibold tracking-[0.18em] uppercase">
+        分类
+      </h2>
+      <ul class="space-y-1">
+        {
+          categories.map(item => (
+            <li>
+              <a
+                href={categoryUrl(item.slug)}
+                class:list={itemClass("category", item.slug)}
+              >
+                <span>{item.name}</span>
+                <span class="text-muted-foreground text-xs">{item.count}</span>
+              </a>
+            </li>
+          ))
+        }
+      </ul>
+    </div>
+
+    {
+      series.length > 0 && (
+        <div class="mt-6">
+          <h2 class="text-muted-foreground mb-2 text-xs font-semibold tracking-[0.18em] uppercase">
+            系列
+          </h2>
+          <ul class="space-y-1">
+            {series.map(item => (
+              <li>
+                <a
+                  href={seriesUrl(item.slug)}
+                  class:list={itemClass("series", item.slug)}
+                >
+                  <span>{item.name}</span>
+                  <span class="text-muted-foreground text-xs">{item.count}</span>
+                </a>
+              </li>
+            ))}
+          </ul>
+        </div>
+      )
+    }
+  </nav>
+</aside>

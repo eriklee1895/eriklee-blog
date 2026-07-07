@@ -1,8 +1,12 @@
 ---
 import type { CollectionEntry } from "astro:content";
+import { getRelativeLocaleUrl } from "astro:i18n";
 import { getPostUrl } from "@/utils/getPostPaths";
+import { slugifyStr } from "@/utils/slugify";
+import { getTaxonomyLabel } from "@/utils/taxonomy";
 import { toTransitionName } from "@/utils/toTransitionName";
 import Datetime from "./Datetime.astro";
+import config from "@/config";
 
 type Props = {
   variant?: "h2" | "h3";
@@ -10,10 +14,41 @@ type Props = {
 
 const { variant: Heading = "h2", id, data, filePath } = Astro.props;
 
-const { title, description, ...props } = data;
+const {
+  title,
+  description,
+  category = "其他",
+  series,
+  type: postType,
+  ...props
+} = data;
+
+const locale = Astro.currentLocale ?? config.site.lang;
+const categoryLabel = getTaxonomyLabel("category", category);
+const seriesLabel = series ? getTaxonomyLabel("series", series) : "";
 ---
 
 <li class="border-border my-6 border-b pb-6 last:border-b-0">
+  <div class="text-muted-foreground mb-2 flex flex-wrap items-center gap-2 text-xs">
+    <a
+      href={getRelativeLocaleUrl(locale, `categories/${slugifyStr(category)}`)}
+      class="hover:text-accent"
+    >
+      {categoryLabel}
+    </a>
+    {series && <span>/</span>}
+    {
+      series && (
+        <a
+          href={getRelativeLocaleUrl(locale, `series/${slugifyStr(series)}`)}
+          class="hover:text-accent"
+        >
+          {seriesLabel}
+        </a>
+      )
+    }
+    {postType && <span class="border-border rounded-full border px-2 py-0.5">{postType}</span>}
+  </div>
   <a
     href={getPostUrl(id, filePath, Astro.currentLocale)}
     class:list={[

@@ -17,6 +17,7 @@ const posts = defineCollection({
       draft: z.boolean().optional(),
       category: z.string().optional(),
       series: z.string().optional().nullable(),
+      type: z.string().default("技术笔记"),
       tags: z.array(z.string()).default(["others"]),
       ogImage: image().or(z.string()).optional(),
       description: z.string(),
