@@ -11,7 +11,6 @@ import { getSortedPosts } from "@/utils/getSortedPosts";
 import { slugifyStr } from "@/utils/slugify";
 import { getTaxonomyLabel } from "@/utils/taxonomy";
 import { toTransitionName } from "@/utils/toTransitionName";
-import EditPost from "./_components/EditPost.astro";
 import ShareLinks from "./_components/ShareLinks.astro";
 import BackButton from "./_components/BackButton.astro";
 import BackToTopButton from "./_components/BackToTopButton.astro";
@@ -73,7 +72,6 @@ const {
   category = "其他",
   series,
   type: postType,
-  hideEditPost,
 } = post.data;
 
 const { Content } = await render(post);
@@ -163,16 +161,6 @@ const taxonomyLinks = [
 
       <div class="mt-5 flex flex-wrap items-center gap-x-3 gap-y-2">
         <Datetime {pubDatetime} {modDatetime} {timezone} size="lg" />
-        <span
-          aria-hidden="true"
-          class:list={[
-            "text-muted-foreground max-sm:hidden",
-            { hidden: !config.features.editPost?.enabled || hideEditPost },
-          ]}
-        >
-          /
-        </span>
-        <EditPost {hideEditPost} {post} class="max-sm:hidden" />
       </div>
     </header>
 
@@ -189,8 +177,6 @@ const taxonomyLinks = [
     </article>
 
     <hr class="my-8 border-dashed" />
-
-    <EditPost class="sm:hidden" {hideEditPost} {post} />
 
     <BackToTopButton />
 
