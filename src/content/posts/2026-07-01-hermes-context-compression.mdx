@@ -583,7 +583,7 @@ Anthropic 每个请求最多 4 个 `cache_control` 断点。Hermes 用 "system_a
 断点 4: 最后一条非系统消息      ─┘
 ```
 
-`_apply_cache_marker` 按 content 类型注入 marker：字符串 content 转成 `[{"type":"text","text":...,"cache_control":...}]`；list content 加到最后一个元素；None/空加在 `msg["cache_control"]`；tool 消息仅 native Anthropic 加。
+`_apply_cache_marker` 按 content 类型注入 marker：字符串 content 转成 `[\{"type":"text","text":...,"cache_control":...\}]`；list content 加到最后一个元素；None/空加在 `msg["cache_control"]`；tool 消息仅 native Anthropic 加。
 
 ```mermaid
 flowchart LR

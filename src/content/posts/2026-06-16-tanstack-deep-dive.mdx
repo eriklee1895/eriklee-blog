@@ -221,7 +221,7 @@ Query 官网把 server-state 的生命周期画成 4 步（Fetch → Share → R
 
 **最容易踩的认知误区**：把 Query 当成一个"自动 fetch 的 useEffect 替代品"。
 
-它不是。它的核心抽象是**query key 是 cache 的 contract**。你写 `['projects', { status: 'active' }]`，整个 cache 命名空间、invalidation、prefetching、devtools 都围绕这个 key 走。一旦你把 query key 设计乱，invalidation 就成地狱。
+它不是。它的核心抽象是**query key 是 cache 的 contract**。你写 `['projects', \{ status: 'active' \}]`，整个 cache 命名空间、invalidation、prefetching、devtools 都围绕这个 key 走。一旦你把 query key 设计乱，invalidation 就成地狱。
 
 一个最小但完整的例子：
 
@@ -257,7 +257,7 @@ function ProjectList({ status }: { status: 'active' | 'archived' }) {
 }
 ```
 
-这里的 `invalidateQueries({ queryKey: ['projects'] })` 是一句很有"声明式数据"味道的代码——你没说"重新 fetch"，你说"projects 这个命名空间下面的所有数据可能已经过时了"，由 Query 自己决定何时、如何 refetch。
+这里的 `invalidateQueries(\{ queryKey: ['projects'] \})` 是一句很有"声明式数据"味道的代码——你没说"重新 fetch"，你说"projects 这个命名空间下面的所有数据可能已经过时了"，由 Query 自己决定何时、如何 refetch。
 
 ### 4.2 TanStack Router：路由 = 应用契约
 
@@ -271,7 +271,7 @@ function ProjectList({ status }: { status: 'active' | 'archived' }) {
 
 几个**只在 TanStack Router 上是 first-class**的能力：
 
-- **完全类型安全的 path / search params**：写 `<Link to="/projects/$id" params={{ id: 'p1' }} />`，参数写错直接编译失败
+- **完全类型安全的 path / search params**：写 `<Link to="/projects/$id" params=\{\{ id: 'p1' \}\} />`，参数写错直接编译失败
 - **Search params 是真正的 state**：有 schema 校验、继承、结构化共享，不再是 `URLSearchParams` 字符串操作
 - **Route loader 跑在组件之前**：默认 SWR cache，preload on hover / viewport / intent
 - **File-based、code-based、virtual 全部支持**：可以渐进式迁移
@@ -279,7 +279,7 @@ function ProjectList({ status }: { status: 'active' | 'archived' }) {
 我自己在多个项目里最直观的体感差异：
 
 - React Router：你写 `useNavigate()` 然后拼一个字符串
-- TanStack Router：你写 `navigate({ to: '/projects/$id', params: { id }, search: { tab: 'details' } })` —— **改 URL 结构时 TypeScript 帮你找出所有调用点**
+- TanStack Router：你写 `navigate(\{ to: '/projects/$id', params: \{ id \}, search: \{ tab: 'details' \} \})` —— **改 URL 结构时 TypeScript 帮你找出所有调用点**
 
 ### 4.3 TanStack Start：基于 Router 的 full-stack 框架
 
@@ -608,7 +608,7 @@ function ProjectsPage() {
 
 注意几点：
 - `validateSearch: searchSchema` 让 URL 里的 search 自动过 Zod 校验，错的 query 直接拦截
-- `navigate({ search: ... })` 是 typed call——写错 status 编译失败
+- `navigate(\{ search: ... \})` 是 typed call——写错 status 编译失败
 - `Route.useSearch()` 拿到的 `status` 已经被 schema 推导过类型
 
 ### 8.6 写数据层（Query）

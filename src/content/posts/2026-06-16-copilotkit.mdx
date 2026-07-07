@@ -31,7 +31,7 @@ source: "index.md"
 - 高风险操作（发邮件、扣款、删除数据）必须有人类批准。**agent 怎么在 graph 中间停下来，弹一个真实的确认 UI？**
 - 用户改了一个表单字段，agent 的下一步规划需要看到。**React state 和 agent state 怎么双向同步？**
 
-*Image pending: CLI 里跑通的 agent 和嵌进真实 SaaS 产品之间的"最后一公里鸿沟"：上下文注入、真组件渲染、HITL、双向 state 四件事没有被 agent framework 解决*
+![CLI 里跑通的 agent 和嵌进真实 SaaS 产品之间的"最后一公里鸿沟"：上下文注入、真组件渲染、HITL、双向 state 四件事没有被 agent framework 解决](./assets/2026-06-16-copilotkit/motivation-last-mile-gap.png)
 
 这就是 CopilotKit 要解决的最后一公里。它**不**是 agent 框架（不是 LangChain 替代），**不**是底层 SDK（不是 Vercel AI SDK 替代），而是**Agent ↔ User**这一层的协议 + React 工具链。
 
@@ -54,7 +54,7 @@ flowchart TB
   S -.跨.-> L5
 ```
 
-*Image pending: AI Agent 开发栈 5 层坐标系 + CopilotKit 跨 L2 + L5 的定位*
+![AI Agent 开发栈 5 层坐标系 + CopilotKit 跨 L2 + L5 的定位](./assets/2026-06-16-copilotkit/five-layers.png)
 
 每层都有自己的代表项目：
 
@@ -110,7 +110,7 @@ flowchart TB
 
 ### 3.2 AG-UI 在协议版图里的位置
 
-*Image pending: AI Agent 协议三件套：MCP (Anthropic) / A2A (Google) / AG-UI (CopilotKit) — 三段协议正交，各管一段边界*
+![AI Agent 协议三件套：MCP (Anthropic) / A2A (Google) / AG-UI (CopilotKit) — 三段协议正交，各管一段边界](./assets/2026-06-16-copilotkit/protocol-landscape.png)
 
 三段协议各管一段：
 
@@ -143,7 +143,7 @@ AG-UI 一共 16 个 event type，分 5 类：
 | Special | `RAW` / `CUSTOM` | 透传事件、用户自定义事件 |
 | Draft | `META_EVENT` / extended `RunFinished` | 应用级 annotation、interrupt 感知的扩展 |
 
-*Image pending: AG-UI 16 Event Types*
+![AG-UI 16 Event Types](./assets/2026-06-16-copilotkit/ag-ui-events.png)
 
 
 3 个事件流模式（这是 AG-UI 设计上很关键的一点）：
@@ -179,13 +179,13 @@ sequenceDiagram
   FE->>U: 文本流 + outline UI 同步更新
 ```
 
-*Image pending: 一次 user input 走过的 AG-UI 事件流：STATE_DELTA 和 TEXT_MESSAGE_CONTENT 并行到达，UI 边出字边重渲染*
+![一次 user input 走过的 AG-UI 事件流：STATE_DELTA 和 TEXT_MESSAGE_CONTENT 并行到达，UI 边出字边重渲染](./assets/2026-06-16-copilotkit/event-sequence.png)
 
 注意 `STATE_DELTA`（增量）和 `TEXT_MESSAGE_CONTENT`（增量）是**并行**的——文本流式输出的同时，状态也在 patch，前端可以根据 `STATE_DELTA` 实时重渲染"被 agent 改的 outline 组件"。
 
 ## 4. CopilotKit 的三件套架构
 
-*Image pending: CopilotKit 三件套架构：Frontend / Runtime / Agent，三层通过 AG-UI 协议连接*
+![CopilotKit 三件套架构：Frontend / Runtime / Agent，三层通过 AG-UI 协议连接](./assets/2026-06-16-copilotkit/three-layer-architecture.png)
 
 三层的职责：
 
@@ -197,7 +197,7 @@ sequenceDiagram
 
 ### 4.2 Runtime
 
-*Image pending: CopilotKit Runtime 详解：你的服务器上的 AG-UI 协议网关，4 大职责 + 6 种可挂载环境*
+![CopilotKit Runtime 详解：你的服务器上的 AG-UI 协议网关，4 大职责 + 6 种可挂载环境](./assets/2026-06-16-copilotkit/runtime-zoom-in.png)
 
 `CopilotRuntime` 是一个 mount 在你自己服务器上的 request handler：
 
@@ -418,7 +418,7 @@ useInterrupt({
 ```
 
 
-*Image pending: HITL Two Patterns Comparison*
+![HITL Two Patterns Comparison](./assets/2026-06-16-copilotkit/hitl-two-patterns.png)
 两种 pattern 的区别：
 
 | Pattern | 谁决定暂停 | 后端 surface | 适用 |
@@ -468,7 +468,7 @@ import "@copilotkit/react-core/v2/styles.css";
 ```
 
 ## 6. Generative UI 的三种 spec
-*Image pending: Generative UI 3 Specs Supported by CopilotKit 1.5+*
+![Generative UI 3 Specs Supported by CopilotKit 1.5+](./assets/2026-06-16-copilotkit/genui-three-specs.png)
 
 
 CopilotKit 1.50 起把市面上三个 generative UI spec 都接进来了：
@@ -488,7 +488,7 @@ CopilotKit 1.50 起把市面上三个 generative UI spec 都接进来了：
 
 `StateStreamingMiddleware` 把 tool 的某个**argument** 的 streaming 直接灌进 state——UI 上 token-by-token 看到 agent 写的字：
 
-*Image pending: State Streaming 前后对比：默认行为是 tool 结束后一次性 STATE_SNAPSHOT，加 StateStreamingMiddleware 后 tool argument 直接 token 级灌入 shared state，UI 和 chat 并行流式更新*
+![State Streaming 前后对比：默认行为是 tool 结束后一次性 STATE_SNAPSHOT，加 StateStreamingMiddleware 后 tool argument 直接 token 级灌入 shared state，UI 和 chat 并行流式更新](./assets/2026-06-16-copilotkit/state-streaming-before-after.png)
 
 ```python
 from langgraph.types import Command
@@ -541,7 +541,7 @@ graph = create_agent(
 | **Microsoft Agent Framework** | L3 | .NET / Python | enterprise integration | UI 一侧比较薄 |
 | **AG2 / AutoGen** | L3 | 学术派 multi-agent | 多 agent 协作、消息协议 | UI 一侧几乎全靠你自己 |
 
-*Image pending: Headless 派 vs Bundle 派决策图：看产品对 agent 的嵌入深度选栈*
+![Headless 派 vs Bundle 派决策图：看产品对 agent 的嵌入深度选栈](./assets/2026-06-16-copilotkit/headless-vs-bundle-decision.png)
 
 **Headless 派 vs Bundle 派**：
 
@@ -699,7 +699,7 @@ function Highlighter({ setHighlight }: { setHighlight: (s: string | null) => voi
 这个 demo 演示**协议层的真正力量**——前端是 CopilotKit，agent 跑在独立 Python LangGraph 服务里。
 
 
-*Image pending: CopilotKit + LangGraph 集成架构（CoAgents 官方图）*
+![CopilotKit + LangGraph 集成架构（CoAgents 官方图）](./assets/2026-06-16-copilotkit/official-coagents-overview.png)
 ### 10.1 用官方 CLI scaffold
 
 ```bash

@@ -355,7 +355,7 @@ with _lock:
 return text
 ```
 
-`steer()` 的 200 线程并发测试就是验证这把锁不丢字:200 个线程各 steer 一次,drain 出来按换行切分必须正好 200 行,集合恰好是 `{note-0..note-199}`。
+`steer()` 的 200 线程并发测试就是验证这把锁不丢字:200 个线程各 steer 一次,drain 出来按换行切分必须正好 200 行,集合恰好是 `\{note-0..note-199\}`。
 
 ### 两个 drain 点,各补一个时间窗
 
@@ -631,7 +631,7 @@ agent._pending_steer_lock = threading.Lock()
 
 那把 `getattr(self, "_pending_steer_lock", None)` 的 fallback 就是那条尾巴:跳过 `__init__` 的测试桩里槽和锁都不存在(机制见 §5),fallback 在锁缺席时裸赋值、仍按换行拼接。生产路径永远走有锁分支。
 
-这块的线程安全不是嘴上说说。`tests/run_agent/test_steer.py` 用 200 个线程各发一条 steer,join 后 drain,断言拆出来正好 200 行、且集合等于 `{note-0 .. note-199}`:
+这块的线程安全不是嘴上说说。`tests/run_agent/test_steer.py` 用 200 个线程各发一条 steer,join 后 drain,断言拆出来正好 200 行、且集合等于 `\{note-0 .. note-199\}`:
 
 ```python
 # tests/run_agent/test_steer.py:163-181
