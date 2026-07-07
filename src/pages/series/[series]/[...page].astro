@@ -11,6 +11,7 @@ import {
   getCategoryItems,
   getPostsByTaxonomy,
   getSeriesItems,
+  getTypeItems,
 } from "@/utils/taxonomy";
 import config from "@/config";
 
@@ -33,6 +34,7 @@ const { page, seriesName } = Astro.props;
 const allPosts = await getCollection("posts", ({ data }) => !data.draft);
 const categories = getCategoryItems(allPosts);
 const series = getSeriesItems(allPosts);
+const types = getTypeItems(allPosts);
 ---
 
 <Layout title={`系列：${seriesName} | ${config.site.title}`}>
@@ -46,6 +48,7 @@ const series = getSeriesItems(allPosts);
     pageDesc={`这里收录 ${seriesName} 系列下的文章。`}
     {categories}
     {series}
+    {types}
     activeKind="series"
     activeSlug={Astro.params.series}
   />

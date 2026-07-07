@@ -6,13 +6,15 @@ import config from "@/config";
 type Props = {
   categories: TaxonomyItem[];
   series: TaxonomyItem[];
-  activeKind?: "all" | "category" | "series";
+  types?: TaxonomyItem[];
+  activeKind?: "all" | "category" | "series" | "type";
   activeSlug?: string;
 };
 
 const {
   categories,
   series,
+  types = [],
   activeKind = "all",
   activeSlug,
 } = Astro.props;
@@ -22,13 +24,15 @@ const locale = Astro.currentLocale ?? config.site.lang;
 const allPostsUrl = getRelativeLocaleUrl(locale, "posts");
 const categoryUrl = (slug: string) =>
   getRelativeLocaleUrl(locale, `categories/${slug}`);
-const seriesUrl = (slug: string) => getRelativeLocaleUrl(locale, `series/${slug}`);
+const seriesUrl = (slug: string) =>
+  getRelativeLocaleUrl(locale, `series/${slug}`);
+const typeUrl = (slug: string) => getRelativeLocaleUrl(locale, `types/${slug}`);
 
 const itemClass = (kind: Props["activeKind"], slug?: string) => [
-  "group flex items-center justify-between gap-3 py-1.5 text-sm",
-  "border-b border-transparent hover:border-border hover:text-accent",
+  "group flex items-center justify-between gap-3 rounded-md px-2 py-1.5 text-sm",
+  "hover:bg-muted/60 hover:text-accent",
   {
-    "text-accent font-semibold":
+    "bg-muted text-accent font-semibold":
       activeKind === kind && (slug ? activeSlug === slug : true),
   },
 ];
@@ -37,7 +41,7 @@ const itemClass = (kind: Props["activeKind"], slug?: string) => [
 <aside class="lg:sticky lg:top-24 lg:self-start">
   <nav
     aria-label="文章分类"
-    class="border-border bg-background/80 border-y py-4 backdrop-blur lg:border-y-0 lg:border-e lg:pe-6"
+    class="border-border bg-background/90 border-y py-4 backdrop-blur lg:border lg:px-4"
   >
     <a href={allPostsUrl} class:list={itemClass("all")}>
       <span>全部文章</span>
@@ -46,10 +50,8 @@ const itemClass = (kind: Props["activeKind"], slug?: string) => [
       </span>
     </a>
 
-    <div class="mt-6">
-      <h2 class="text-muted-foreground mb-2 text-xs font-semibold tracking-[0.18em] uppercase">
-        分类
-      </h2>
+    <div class="mt-5">
+      <h2 class="text-muted-foreground mb-2 text-xs font-semibold">分类</h2>
       <ul class="space-y-1">
         {
           categories.map(item => (
@@ -69,10 +71,8 @@ const itemClass = (kind: Props["activeKind"], slug?: string) => [
 
     {
       series.length > 0 && (
-        <div class="mt-6">
-          <h2 class="text-muted-foreground mb-2 text-xs font-semibold tracking-[0.18em] uppercase">
-            系列
-          </h2>
+        <div class="mt-5">
+          <h2 class="text-muted-foreground mb-2 text-xs font-semibold">系列</h2>
           <ul class="space-y-1">
             {series.map(item => (
               <li>
@@ -81,7 +81,32 @@ const itemClass = (kind: Props["activeKind"], slug?: string) => [
                   class:list={itemClass("series", item.slug)}
                 >
                   <span>{item.name}</span>
-                  <span class="text-muted-foreground text-xs">{item.count}</span>
+                  <span class="text-muted-foreground text-xs">
+                    {item.count}
+                  </span>
+                </a>
+              </li>
+            ))}
+          </ul>
+        </div>
+      )
+    }
+
+    {
+      types.length > 0 && (
+        <div class="mt-5">
+          <h2 class="text-muted-foreground mb-2 text-xs font-semibold">形态</h2>
+          <ul class="space-y-1">
+            {types.map(item => (
+              <li>
+                <a
+                  href={typeUrl(item.slug)}
+                  class:list={itemClass("type", item.slug)}
+                >
+                  <span>{item.name}</span>
+                  <span class="text-muted-foreground text-xs">
+                    {item.count}
+                  </span>
                 </a>
               </li>
             ))}

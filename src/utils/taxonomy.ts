@@ -8,7 +8,7 @@ export type TaxonomyItem = {
   count: number;
 };
 
-type TaxonomyField = "category" | "series" | "type";
+export type TaxonomyField = "category" | "series" | "type";
 
 const FALLBACK_CATEGORY = "其他";
 
@@ -82,4 +82,8 @@ export function getCategoryItems(posts: CollectionEntry<"posts">[]) {
 
 export function getSeriesItems(posts: CollectionEntry<"posts">[]) {
   return getTaxonomyItems(posts, "series");
+}
+
+export function getTypeItems(posts: CollectionEntry<"posts">[]) {
+  return getTaxonomyItems(posts, "type");
 }

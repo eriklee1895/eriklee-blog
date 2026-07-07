@@ -11,7 +11,8 @@ type Props = {
   pageDesc?: string;
   categories: TaxonomyItem[];
   series: TaxonomyItem[];
-  activeKind?: "all" | "category" | "series";
+  types?: TaxonomyItem[];
+  activeKind?: "all" | "category" | "series" | "type";
   activeSlug?: string;
 };
 
@@ -21,6 +22,7 @@ const {
   pageDesc,
   categories,
   series,
+  types = [],
   activeKind = "all",
   activeSlug,
 } = Astro.props;
@@ -28,25 +30,26 @@ const {
 
 <main
   id="main-content"
-  class="mx-auto grid w-full max-w-6xl grid-cols-1 gap-8 px-4 pb-8 lg:grid-cols-[16rem_minmax(0,1fr)]"
+  class="mx-auto grid w-full max-w-6xl grid-cols-1 gap-8 px-4 pb-8 lg:grid-cols-[17rem_minmax(0,1fr)]"
 >
-  <TaxonomySidebar
-    {categories}
-    {series}
-    {activeKind}
-    {activeSlug}
-  />
+  <TaxonomySidebar {categories} {series} {types} {activeKind} {activeSlug} />
 
   <section class="min-w-0">
     <div class="border-border border-b pb-6">
-      <p class="text-muted-foreground mb-3 text-sm font-semibold tracking-[0.18em] uppercase">
+      <p class="text-muted-foreground mb-3 text-sm font-semibold">
         Erik Lee / Blog
       </p>
       <h1 class="text-2xl font-semibold sm:text-4xl">{pageTitle}</h1>
-      {pageDesc && <p class="text-muted-foreground mt-3 max-w-2xl leading-7">{pageDesc}</p>}
+      {
+        pageDesc && (
+          <p class="text-muted-foreground mt-3 max-w-2xl leading-7">
+            {pageDesc}
+          </p>
+        )
+      }
     </div>
 
-    <ul>
+    <ul class="divide-border divide-y">
       {page.data.map(data => <Card {...data} />)}
     </ul>
   </section>

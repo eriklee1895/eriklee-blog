@@ -1,49 +1,56 @@
 ---
-import type { GetStaticPaths } from "astro";
 import { getCollection } from "astro:content";
+import type { GetStaticPathsOptions } from "astro";
 import Layout from "@/layouts/Layout.astro";
 import Header from "@/components/Header.astro";
 import Breadcrumb from "@/components/Breadcrumb.astro";
 import PostExplorer from "@/components/PostExplorer.astro";
 import Footer from "@/components/Footer.astro";
 import Pagination from "@/components/Pagination.astro";
-import { getSortedPosts } from "@/utils/getSortedPosts";
 import {
   getCategoryItems,
+  getPostsByTaxonomy,
   getSeriesItems,
   getTypeItems,
 } from "@/utils/taxonomy";
-import { useTranslations } from "@/i18n";
 import config from "@/config";
 
-export const getStaticPaths = (async ({ paginate }) => {
+export async function getStaticPaths({ paginate }: GetStaticPathsOptions) {
   const posts = await getCollection("posts", ({ data }) => !data.draft);
-  return paginate(getSortedPosts(posts), { pageSize: config.posts.perPage });
-}) satisfies GetStaticPaths;
+  const typeItems = getTypeItems(posts);
 
-const { page } = Astro.props;
+  return typeItems.flatMap(type => {
+    const typePosts = getPostsByTaxonomy(posts, "type", type.slug);
 
-const locale = Astro.currentLocale ?? config.site.lang;
-const t = useTranslations(locale);
+    return paginate(typePosts, {
+      params: { type: type.slug },
+      props: { typeName: type.name },
+      pageSize: config.posts.perPage,
+    });
+  });
+}
+
+const { page, typeName } = Astro.props;
 const allPosts = await getCollection("posts", ({ data }) => !data.draft);
 const categories = getCategoryItems(allPosts);
 const series = getSeriesItems(allPosts);
 const types = getTypeItems(allPosts);
 ---
 
-<Layout title={`${t.pages.postsTitle} | ${config.site.title}`}>
+<Layout title={`形态：${typeName} | ${config.site.title}`}>
   <Header />
 
   <Breadcrumb />
 
   <PostExplorer
     {page}
-    pageTitle={t.pages.postsTitle}
-    pageDesc="按分类和系列浏览所有公开文章。"
+    pageTitle={`形态：${typeName}`}
+    pageDesc={`这里收录 ${typeName} 形态的文章。`}
     {categories}
     {series}
     {types}
-    activeKind="all"
+    activeKind="type"
+    activeSlug={Astro.params.type}
   />
 
   <Pagination {page} />
