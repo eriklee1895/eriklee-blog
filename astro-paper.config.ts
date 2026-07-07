@@ -4,11 +4,11 @@ export default defineAstroPaperConfig({
   site: {
     url: "https://eriklee-blog.pages.dev/",
     title: "Erik Lee",
-    description: "AI engineering notes, agent systems, and long-form technical essays.",
+    description: "关于 AI 工程、Agent 系统、编程工具和技术写作的长期笔记。",
     author: "Erik Lee",
     profile: "https://github.com/eriklee1895",
     ogImage: "default-og.jpg",
-    lang: "en",
+    lang: "zh-CN",
     timezone: "Asia/Shanghai",
     dir: "ltr",
   },
