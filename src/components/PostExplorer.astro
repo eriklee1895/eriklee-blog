@@ -1,31 +1,42 @@
 ---
 import type { Page } from "astro";
 import type { CollectionEntry } from "astro:content";
+import LinkButton from "@/components/LinkButton.astro";
 import Card from "@/components/Card.astro";
 import TaxonomySidebar from "@/components/TaxonomySidebar.astro";
 import type { TaxonomyItem } from "@/utils/taxonomy";
 
 type Props = {
-  page: Page<CollectionEntry<"posts">>;
+  page?: Page<CollectionEntry<"posts">>;
+  posts?: CollectionEntry<"posts">[];
   pageTitle: string;
   pageDesc?: string;
+  eyebrow?: string;
   categories: TaxonomyItem[];
   series: TaxonomyItem[];
   types?: TaxonomyItem[];
   activeKind?: "all" | "category" | "series" | "type";
   activeSlug?: string;
+  actionHref?: string;
+  actionLabel?: string;
 };
 
 const {
   page,
+  posts,
   pageTitle,
   pageDesc,
+  eyebrow = "Erik Lee / Blog",
   categories,
   series,
   types = [],
   activeKind = "all",
   activeSlug,
+  actionHref,
+  actionLabel,
 } = Astro.props;
+
+const items = page?.data ?? posts ?? [];
 ---
 
 <main
@@ -35,22 +46,36 @@ const {
   <TaxonomySidebar {categories} {series} {types} {activeKind} {activeSlug} />
 
   <section class="min-w-0">
-    <div class="border-border border-b pb-6">
-      <p class="text-muted-foreground mb-3 text-sm font-semibold">
-        Erik Lee / Blog
-      </p>
-      <h1 class="text-2xl font-semibold sm:text-4xl">{pageTitle}</h1>
+    <div class="border-border border-b pb-6 sm:flex sm:items-end sm:justify-between sm:gap-6">
+      <div>
+        <p class="text-muted-foreground mb-3 text-sm font-semibold">
+          {eyebrow}
+        </p>
+        <h1 class="max-w-3xl text-3xl leading-tight font-semibold sm:text-5xl">
+          {pageTitle}
+        </h1>
+        {
+          pageDesc && (
+            <p class="text-muted-foreground mt-4 max-w-2xl leading-7">
+              {pageDesc}
+            </p>
+          )
+        }
+      </div>
       {
-        pageDesc && (
-          <p class="text-muted-foreground mt-3 max-w-2xl leading-7">
-            {pageDesc}
-          </p>
+        actionHref && actionLabel && (
+          <LinkButton
+            href={actionHref}
+            class="mt-5 shrink-0 sm:mt-0"
+          >
+            {actionLabel}
+          </LinkButton>
         )
       }
     </div>
 
     <ul class="divide-border divide-y">
-      {page.data.map(data => <Card {...data} />)}
+      {items.map(data => <Card {...data} />)}
     </ul>
   </section>
 </main>
