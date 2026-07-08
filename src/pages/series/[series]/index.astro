@@ -1,0 +1,42 @@
+---
+import Layout from "@/layouts/Layout.astro";
+import PostCard from "@/components/PostCard.astro";
+import Sidebar from "@/components/Sidebar.astro";
+import { getAllPosts, getCategories, getSeries } from "@/lib/posts";
+import { slugify } from "@/lib/utils";
+
+export async function getStaticPaths() {
+  const posts = await getAllPosts();
+  const seriesList = getSeries(posts);
+  return seriesList.map(s => ({
+    params: { series: s.slug },
+    props: { posts: s.posts, seriesName: s.name, categories: getCategories(posts), series: seriesList },
+  }));
+}
+
+const { posts, seriesName, categories, series } = Astro.props;
+const orderedPosts = [...posts].sort((a, b) => a.data.pubDatetime.getTime() - b.data.pubDatetime.getTime());
+---
+
+<Layout title={`系列：${seriesName}`} description={`${seriesName} 系列的所有文章。`}>
+  <div class="container-wide py-10 sm:py-14 lg:grid lg:grid-cols-[1fr_14rem] lg:gap-12">
+    <div>
+      <div class="mb-8 border-b border-[var(--border)] pb-6">
+        <a href="/" class="text-sm text-[var(--fg-subtle)] hover:text-[var(--accent)]">← 返回</a>
+        <h1 class="mt-2 text-3xl font-semibold tracking-tight sm:text-4xl">{seriesName}</h1>
+        <p class="mt-2 text-[var(--fg-muted)]">{posts.length} 篇文章 · 按时间顺序排列</p>
+      </div>
+      <ol class="space-y-0">
+        {orderedPosts.map((p, i) => (
+          <li class="flex gap-4 border-b border-[var(--border-subtle)] py-5 first:pt-0">
+            <span class="mt-0.5 flex h-6 w-6 flex-none items-center justify-center rounded-full bg-[var(--bg-subtle)] text-xs font-medium text-[var(--fg-muted)]">{i + 1}</span>
+            <div class="flex-1">
+              <PostCard post={p} variant="compact" />
+            </div>
+          </li>
+        ))}
+      </ol>
+    </div>
+    <Sidebar {categories} {series} activeKind="series" activeSlug={slugify(seriesName)} />
+  </div>
+</Layout>

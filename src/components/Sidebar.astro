@@ -1,0 +1,63 @@
+---
+import type { TaxonomyGroup } from "@/lib/posts";
+import { slugify } from "@/lib/utils";
+
+interface Props {
+  categories: TaxonomyGroup[];
+  series: TaxonomyGroup[];
+  activeKind?: "all" | "category" | "series" | "tag";
+  activeSlug?: string;
+}
+
+const { categories, series, activeKind = "all", activeSlug } = Astro.props;
+
+const linkClass = (kind: string, slug?: string) => {
+  const active = activeKind === kind && (slug ? activeSlug === slug : true);
+  return [
+    "flex items-center justify-between rounded-md px-2 py-1.5 text-sm transition-colors",
+    active ? "bg-[var(--bg-subtle)] text-[var(--accent)] font-medium" : "text-[var(--fg-muted)] hover:bg-[var(--bg-subtle)] hover:text-[var(--fg)]",
+  ].join(" ");
+};
+---
+
+<aside class="hidden lg:block lg:w-56 lg:flex-shrink-0">
+  <nav class="sticky top-20 space-y-6">
+    <div>
+      <a href="/" class={linkClass("all")}>
+        <span>全部文章</span>
+      </a>
+    </div>
+
+    {categories.length > 0 && (
+      <div>
+        <h2 class="mb-2 px-2 text-[11px] font-semibold uppercase tracking-wider text-[var(--fg-subtle)]">分类</h2>
+        <ul class="space-y-0.5">
+          {categories.map(c => (
+            <li>
+              <a href={`/categories/${c.slug}/`} class={linkClass("category", c.slug)}>
+                <span>{c.name}</span>
+                <span class="text-xs text-[var(--fg-subtle)]">{c.count}</span>
+              </a>
+            </li>
+          ))}
+        </ul>
+      </div>
+    )}
+
+    {series.length > 0 && (
+      <div>
+        <h2 class="mb-2 px-2 text-[11px] font-semibold uppercase tracking-wider text-[var(--fg-subtle)]">系列</h2>
+        <ul class="space-y-0.5">
+          {series.map(s => (
+            <li>
+              <a href={`/series/${s.slug}/`} class={linkClass("series", s.slug)}>
+                <span>{s.name}</span>
+                <span class="text-xs text-[var(--fg-subtle)]">{s.count}</span>
+              </a>
+            </li>
+          ))}
+        </ul>
+      </div>
+    )}
+  </nav>
+</aside>

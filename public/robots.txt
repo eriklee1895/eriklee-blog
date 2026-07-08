@@ -1,0 +1,3 @@
+User-agent: *
+Allow: /
+Sitemap: https://eriklee-blog.pages.dev/sitemap-index.xml

@@ -1,0 +1,50 @@
+---
+import Layout from "@/layouts/Layout.astro";
+import "@pagefind/default-ui/css/ui.css";
+---
+
+<Layout title="搜索" description="搜索站内文章。">
+  <div class="container-prose py-10 sm:py-14">
+    <h1 class="text-3xl font-semibold tracking-tight sm:text-4xl">搜索</h1>
+    <div id="search" class="mt-8"></div>
+  </div>
+</Layout>
+
+<script>
+  const onIdle = window.requestIdleCallback || ((cb) => setTimeout(cb, 1));
+  onIdle(async () => {
+    const { PagefindUI } = await import("@pagefind/default-ui");
+    new PagefindUI({
+      element: "#search",
+      showSubResults: true,
+      showImages: false,
+      baseUrl: "/",
+    });
+  });
+</script>
+
+<style is:global>
+  #search {
+    --pagefind-ui-font: var(--font-sans);
+    --pagefind-ui-text: var(--fg);
+    --pagefind-ui-background: var(--bg);
+    --pagefind-ui-border: var(--border);
+    --pagefind-ui-primary: var(--accent);
+    --pagefind-ui-border-radius: 6px;
+    --pagefind-ui-border-width: 1px;
+  }
+  #search form::before { background-color: var(--fg); }
+  #search input {
+    border: 1px solid var(--border) !important;
+    background: var(--bg);
+    padding: 0.75rem 1rem;
+    font-size: 1rem;
+    border-radius: var(--radius-md);
+  }
+  #search input:focus { outline: 2px solid var(--accent); outline-offset: 0; }
+  #search .pagefind-ui__result-title a {
+    color: var(--accent);
+    text-decoration: none;
+  }
+  #search .pagefind-ui__result-title a:hover { text-decoration: underline; }
+</style>

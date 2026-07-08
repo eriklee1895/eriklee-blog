@@ -1,0 +1,45 @@
+---
+import Layout from "@/layouts/Layout.astro";
+import PostCard from "@/components/PostCard.astro";
+import Sidebar from "@/components/Sidebar.astro";
+import { getAllPosts, getCategories, getSeries } from "@/lib/posts";
+
+const posts = await getAllPosts();
+const featured = posts[0];
+const recent = posts.slice(1, 8);
+const categories = getCategories(posts);
+const series = getSeries(posts);
+const totalPosts = posts.length;
+---
+
+<Layout>
+  {/* Hero */}
+  <section class="container-wide pt-16 pb-12 sm:pt-24 sm:pb-16">
+    <p class="text-sm font-medium tracking-wider text-[var(--accent)] mb-3">Erik Lee · 现场笔记</p>
+    <h1 class="max-w-3xl text-4xl leading-[1.15] font-semibold tracking-tight sm:text-5xl">
+      用模型搭系统时，<br class="hidden sm:block"/>我写下的笔记。
+    </h1>
+    <p class="mt-5 max-w-2xl text-lg leading-relaxed text-[var(--fg-muted)]">
+      AI 工程、Agent 架构、编程工具、开发者基础设施。<br class="hidden sm:block"/>
+      从源码读到把模型接进真实软件——少一点热点复述，多一点具体的判断。
+    </p>
+  </section>
+
+  {/* Content grid */}
+  <div class="container-wide pb-16 lg:grid lg:grid-cols-[1fr_14rem] lg:gap-12">
+    <div>
+      <PostCard post={featured} variant="featured" />
+
+      <div>
+        <h2 class="mb-2 text-xs font-semibold uppercase tracking-wider text-[var(--fg-subtle)]">最新文章</h2>
+        {recent.map(p => <PostCard post={p} />)}
+        <a href="/posts/" class="mt-4 inline-flex items-center gap-1 text-sm font-medium text-[var(--accent)] hover:underline underline-offset-4">
+          查看全部 {totalPosts} 篇
+          <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14"/><path d="m12 5 7 7-7 7"/></svg>
+        </a>
+      </div>
+    </div>
+
+    <Sidebar {categories} {series} />
+  </div>
+</Layout>

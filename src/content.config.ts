@@ -1,0 +1,31 @@
+import { defineCollection, z } from "astro:content";
+import { glob } from "astro/loaders";
+
+const posts = defineCollection({
+  loader: glob({ pattern: "**/[^_]*.{md,mdx}", base: "./src/content/posts" }),
+  schema: ({ image }) =>
+    z.object({
+      title: z.string(),
+      description: z.string(),
+      pubDatetime: z.coerce.date(),
+      modDatetime: z.coerce.date().optional(),
+      author: z.string().default("Erik Lee"),
+      draft: z.boolean().default(false),
+      featured: z.boolean().default(false),
+      category: z.string().default("其他"),
+      series: z.string().optional(),
+      tags: z.array(z.string()).default([]),
+      ogImage: image().or(z.string()).optional(),
+      canonicalURL: z.string().optional(),
+    }),
+});
+
+const pages = defineCollection({
+  loader: glob({ pattern: "**/[^_]*.{md,mdx}", base: "./src/content/pages" }),
+  schema: z.object({
+    title: z.string(),
+    description: z.string().optional(),
+  }),
+});
+
+export const collections = { posts, pages };

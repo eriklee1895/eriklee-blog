@@ -1,0 +1,151 @@
+---
+import "@/styles/global.css";
+import Icon from "@/components/icons/Icon.astro";
+
+interface Props {
+  title?: string;
+  description?: string;
+}
+
+const {
+  title = "Erik Lee",
+  description = "AI 工程、Agent 系统、编程工具与技术写作的长期笔记。",
+} = Astro.props;
+
+const canonicalURL = new URL(Astro.url.pathname, Astro.site ?? Astro.url).href;
+const fullTitle = title === "Erik Lee" ? title : `${title} · Erik Lee`;
+---
+
+<!doctype html>
+<html lang="zh-CN" class="scroll-smooth">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+    <link rel="alternate icon" href="/favicon.ico" />
+    <link rel="canonical" href={canonicalURL} />
+    <meta name="generator" content={Astro.generator} />
+
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500&family=Source+Serif+4:ital,opsz,wght@0,8..60,400;0,8..60,600;1,8..60,400&display=swap" rel="stylesheet" />
+
+    <title>{fullTitle}</title>
+    <meta name="title" content={fullTitle} />
+    <meta name="description" content={description} />
+    <meta name="author" content="Erik Lee" />
+
+    <meta property="og:type" content="website" />
+    <meta property="og:site_name" content="Erik Lee" />
+    <meta property="og:title" content={fullTitle} />
+    <meta property="og:description" content={description} />
+    <meta property="og:url" content={canonicalURL} />
+
+    <meta name="twitter:card" content="summary_large_image" />
+    <meta name="twitter:title" content={fullTitle} />
+    <meta name="twitter:description" content={description} />
+
+    <link rel="alternate" type="application/rss+xml" title="Erik Lee" href="/rss.xml" />
+    <link rel="sitemap" href="/sitemap-index.xml" />
+
+    <meta name="theme-color" content="" />
+
+    <slot name="head" />
+
+    <script is:inline>
+      (function () {
+        try {
+          var stored = localStorage.getItem("theme");
+          var prefersDark = window.matchMedia("(prefers-color-scheme: dark)").matches;
+          var theme = stored || (prefersDark ? "dark" : "light");
+          var root = document.documentElement;
+          root.setAttribute("data-theme", theme);
+          root.classList.toggle("dark", theme === "dark");
+        } catch (e) {}
+      })();
+    </script>
+  </head>
+  <body class="flex min-h-screen flex-col">
+    <a
+      href="#main-content"
+      class="sr-only focus:not-sr-only focus:fixed focus:top-3 focus:left-3 focus:z-50 focus:rounded focus:bg-[var(--accent)] focus:px-3 focus:py-2 focus:text-[var(--accent-contrast)]"
+    >
+      跳到正文
+    </a>
+
+    <header class="sticky top-0 z-40 border-b border-[var(--border)] bg-[var(--bg)]/85 backdrop-blur-md">
+      <div class="container-wide flex h-14 items-center justify-between">
+        <a href="/" class="flex items-center gap-2 font-semibold tracking-tight hover:opacity-80 transition-opacity">
+          <span class="inline-flex h-7 w-7 items-center justify-center rounded-md bg-[var(--accent)] text-[var(--accent-contrast)] text-sm font-bold">E</span>
+          <span>Erik Lee</span>
+        </a>
+
+        <nav class="hidden items-center gap-1 text-sm sm:flex">
+          <a href="/" class:list={["rounded-md px-3 py-1.5 transition-colors", Astro.url.pathname === "/" ? "bg-[var(--bg-subtle)] text-[var(--fg)] font-medium" : "text-[var(--fg-muted)] hover:text-[var(--fg)] hover:bg-[var(--bg-subtle)]"]}>文章</a>
+          <a href="/tags" class:list={["rounded-md px-3 py-1.5 transition-colors", Astro.url.pathname.startsWith("/tags") ? "bg-[var(--bg-subtle)] text-[var(--fg)] font-medium" : "text-[var(--fg-muted)] hover:text-[var(--fg)] hover:bg-[var(--bg-subtle)]"]}>标签</a>
+          <a href="/about" class:list={["rounded-md px-3 py-1.5 transition-colors", Astro.url.pathname === "/about" ? "bg-[var(--bg-subtle)] text-[var(--fg)] font-medium" : "text-[var(--fg-muted)] hover:text-[var(--fg)] hover:bg-[var(--bg-subtle)]"]}>关于</a>
+        </nav>
+
+        <div class="flex items-center gap-1">
+          <a href="/search" aria-label="搜索" class="rounded-md p-2 text-[var(--fg-muted)] hover:bg-[var(--bg-subtle)] hover:text-[var(--fg)] transition-colors">
+            <Icon name="search" size={18} />
+          </a>
+          <button id="theme-toggle" aria-label="切换主题" class="rounded-md p-2 text-[var(--fg-muted)] hover:bg-[var(--bg-subtle)] hover:text-[var(--fg)] transition-colors">
+            <Icon name="sun" size={18} class="hidden dark:block" />
+            <Icon name="moon" size={18} class="block dark:hidden" />
+          </button>
+          <button id="mobile-menu-btn" aria-label="菜单" aria-expanded="false" class="rounded-md p-2 text-[var(--fg-muted)] hover:bg-[var(--bg-subtle)] hover:text-[var(--fg)] transition-colors sm:hidden">
+            <Icon name="menu" size={18} id="menu-icon" />
+            <Icon name="close" size={18} id="close-icon" class="hidden" />
+          </button>
+        </div>
+      </div>
+
+      <div id="mobile-menu" class="hidden border-t border-[var(--border)] sm:hidden">
+        <nav class="container-wide flex flex-col py-2">
+          <a href="/" class="rounded-md px-3 py-2 text-[var(--fg-muted)] hover:bg-[var(--bg-subtle)] hover:text-[var(--fg)]">文章</a>
+          <a href="/tags" class="rounded-md px-3 py-2 text-[var(--fg-muted)] hover:bg-[var(--bg-subtle)] hover:text-[var(--fg)]">标签</a>
+          <a href="/about" class="rounded-md px-3 py-2 text-[var(--fg-muted)] hover:bg-[var(--bg-subtle)] hover:text-[var(--fg)]">关于</a>
+        </nav>
+      </div>
+    </header>
+
+    <main id="main-content" class="flex-1">
+      <slot />
+    </main>
+
+    <footer class="border-t border-[var(--border)] mt-20">
+      <div class="container-wide flex flex-col items-center justify-between gap-4 py-8 sm:flex-row">
+        <p class="text-sm text-[var(--fg-subtle)]">
+          © {new Date().getFullYear()} Erik Lee · <a href="/rss.xml" class="inline-flex items-center gap-1 hover:text-[var(--accent)]"><Icon name="rss" size={12} /> RSS</a>
+        </p>
+        <div class="flex items-center gap-3 text-[var(--fg-subtle)]">
+          <a href="https://github.com/eriklee1895" aria-label="GitHub" class="rounded p-1.5 hover:bg-[var(--bg-subtle)] hover:text-[var(--fg)] transition-colors">
+            <Icon name="github" size={18} />
+          </a>
+          <a href="mailto:eriklee1895@gmail.com" aria-label="邮件" class="rounded p-1.5 hover:bg-[var(--bg-subtle)] hover:text-[var(--fg)] transition-colors">
+            <Icon name="mail" size={18} />
+          </a>
+        </div>
+      </div>
+    </footer>
+
+    <script>
+      import "@/scripts/theme";
+    </script>
+    <script>
+      const btn = document.getElementById("mobile-menu-btn");
+      const menu = document.getElementById("mobile-menu");
+      const menuIcon = document.getElementById("menu-icon");
+      const closeIcon = document.getElementById("close-icon");
+      if (btn && menu) {
+        btn.addEventListener("click", () => {
+          const open = menu.classList.toggle("hidden") === false;
+          btn.setAttribute("aria-expanded", String(open));
+          menuIcon?.classList.toggle("hidden", open);
+          closeIcon?.classList.toggle("hidden", !open);
+        });
+      }
+    </script>
+  </body>
+</html>
